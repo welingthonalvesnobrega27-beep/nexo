@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+ from flask import Flask, render_template, request, jsonify
 import re, requests, urllib.parse, random, time
 app = Flask(__name__)
 
@@ -51,4 +51,6 @@ def chat():
     return jsonify({"reply": "Tive uma instabilidade aqui, manda de novo?"})
 
 if __name__ == '__main__':
-app.run(host='0.0.0.0', port=5000)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
