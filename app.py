@@ -3,37 +3,44 @@ import os
 from groq import Groq
 
 app = Flask(__name__)
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+api_key = os.environ.get("GROQ_API_KEY")
+client = Groq(api_key=api_key) if api_key else None
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        return f"<h1>Erro: {e}</h1><p>Crie templates/index.html</p>", 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
-        data = request.get_json()
-        user_msg = data.get('message', '')
+        if not client:
+            return jsonify({"reply": "GROQ_API_KEY nao configurada no Render"})
 
-        if not user_msg:
-            return jsonify({"reply": "Manda uma mensagem ai"})
+        data = request.get_json(force=True)
+        msg = data.get('message','').strip()
+        if not msg:
+            return jsonify({"reply": "Manda uma mensagem ai!"})
 
-        completion = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+        comp = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             messages=[
-                {"role": "system", "content": "Você é o NEXO, uma IA útil, direta e brasileira."},
-                {"role": "user", "content": user_msg}
+                {"role":"system","content":"Voce e o NEXO, IA criada em Goiania. Seja parceiro e direto."},
+                {"role":"user","content":msg}
             ],
             temperature=0.7,
             max_tokens=1024
         )
-
-        reply = completion.choices[0].message.content
-        return jsonify({"reply": reply})
-
+        return jsonify({"reply": comp.choices[0].message.content})
     except Exception as e:
-        print(f"ERRO GROQ: {e}")
-        return jsonify({"reply": f"ERRO GROQ: {str(e)}"})
+        return jsonify({"reply": f"ERRO: {str(e)}"}), 200
+
+@app.route('/health')
+def health():
+    return "OK", 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
