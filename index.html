@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXO Pro</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px}
+#chat{max-width:600px;margin:0 auto}
+.msg{padding:12px;margin:10px 0;border-radius:15px}
+.bot{background:#1a1a1a;border-left:3px solid #00ff88}
+.user{background:#00ff88;color:#000;text-align:right;margin-left:50px}
+#box{display:flex;gap:10px;position:fixed;bottom:20px;left:20px;right:20px;max-width:600px;margin:auto}
+input{flex:1;padding:15px;border-radius:25px;border:none;background:#222;color:#fff}
+button{padding:15px 25px;border-radius:25px;border:none;background:#00ff88;font-weight:bold}
+</style>
+</head>
+<body>
+<div id="chat">
+<div class="msg bot">Oi! Como posso ajudar?</div>
+</div>
+<div id="box">
+<input id="inp" placeholder="Digite aqui..." onkeypress="if(event.key==='Enter')send()">
+<button onclick="send()">Enviar</button>
+</div>
+<script>
+async function send(){
+ let i=document.getElementById('inp');
+ let t=i.value.trim();
+ if(!t)return;
+ let c=document.getElementById('chat');
+ c.innerHTML+=`<div class="msg user">${t}</div>`;
+ i.value='';
+ try{
+  let r=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t})});
+  let d=await r.json();
+  c.innerHTML+=`<div class="msg bot">${d.reply}</div>`;
+ }catch(e){
+  c.innerHTML+=`<div class="msg bot">Erro de conexão, tenta de novo - ${e}</div>`;
+ }
+ window.scrollTo(0,document.body.scrollHeight);
+}
+</script>
+</body>
+</html>
