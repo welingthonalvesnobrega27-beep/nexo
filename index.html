@@ -2,22 +2,22 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NEXO Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXO Pro MAX</title>
 <style>
-body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px}
-#chat{max-width:600px;margin:0 auto}
-.msg{padding:12px;margin:10px 0;border-radius:15px}
+body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;margin:0;padding:0;padding-bottom:80px}
+#chat{max-width:600px;margin:0 auto;padding:20px}
+.msg{padding:12px 15px;margin:10px 0;border-radius:15px;word-wrap:break-word}
 .bot{background:#1a1a1a;border-left:3px solid #00ff88}
-.user{background:#00ff88;color:#000;text-align:right;margin-left:50px}
-#box{display:flex;gap:10px;position:fixed;bottom:20px;left:20px;right:20px;max-width:600px;margin:auto}
-input{flex:1;padding:15px;border-radius:25px;border:none;background:#222;color:#fff}
-button{padding:15px 25px;border-radius:25px;border:none;background:#00ff88;font-weight:bold}
+.user{background:#00ff88;color:#000;text-align:right;margin-left:40px}
+#box{display:flex;gap:10px;position:fixed;bottom:20px;left:10px;right:10px;max-width:600px;margin:0 auto;background:#0a0a0a;padding:5px}
+input{flex:1;padding:15px;border-radius:25px;border:none;outline:none;background:#1a1a1a;color:#fff}
+button{padding:15px 25px;border-radius:25px;border:none;background:#00ff88;color:#000;font-weight:bold}
 </style>
 </head>
 <body>
 <div id="chat">
-<div class="msg bot">Oi! Como posso ajudar?</div>
+<div class="msg bot">Oi! Como posso ajudar? 🚀</div>
 </div>
 <div id="box">
 <input id="inp" placeholder="Digite aqui..." onkeypress="if(event.key==='Enter')send()">
@@ -36,9 +36,39 @@ async function send(){
   let d=await r.json();
   c.innerHTML+=`<div class="msg bot">${d.reply}</div>`;
  }catch(e){
-  c.innerHTML+=`<div class="msg bot">Erro de conexão, tenta de novo - ${e}</div>`;
+  c.innerHTML+=`<div class="msg bot">Erro de conexao, tente novamente.</div>`;
  }
  window.scrollTo(0,document.body.scrollHeight);
+}
+const params = new URLSearchParams(window.location.search);
+const action = params.get('action');
+const limpar = () => window.history.replaceState({}, '', location.pathname);
+if(action){
+  if(action==='avaliar'){
+    document.body.insertAdjacentHTML('beforeend', `
+    <div id="modalAvaliar" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:9999999">
+      <div style="background:#121212;padding:30px;border-radius:20px;text-align:center;border:2px solid #00ff88;width:90%;max-width:360px">
+        <h2 style="color:white;margin:0">Avaliar NEXO PRO MAX</h2>
+        <div style="font-size:48px;margin:20px 0">⭐⭐⭐⭐⭐</div>
+        <p style="color:#aaa">Obrigado por usar o NEXO!</p>
+        <button onclick="alert('Obrigado pela avaliacao 5 estrelas! ❤️'); document.getElementById('modalAvaliar').remove(); limpar();" style="width:100%;background:#00ff88;color:#000;padding:14px;border:none;border-radius:12px;font-weight:bold;font-size:16px;margin-top:10px">AVALIAR COM 5 ESTRELAS</button>
+        <button onclick="document.getElementById('modalAvaliar').remove(); limpar();" style="background:none;border:none;color:#fff;margin-top:15px">Fechar</button>
+      </div>
+    </div>`);
+  }
+  if(action==='novo'){ localStorage.clear(); limpar(); location.href='/'; }
+  if(action==='compartilhar'){ 
+    if(navigator.share){ navigator.share({title:'NEXO PRO MAX', text:'Baixa esse app de IA top!', url:'https://nexo-putu.onrender.com'}) } 
+    else { location.href='https://wa.me/?text=Baixa%20o%20NEXO%20PRO%20MAX%20https://nexo-putu.onrender.com' } 
+    limpar();
+  }
+  if(action==='historico'){ alert('📜 Historico: Em breve!'); limpar(); }
+  if(action==='config'){ alert('⚙️ Configuracoes em breve!'); limpar(); }
+  if(action==='biblioteca'){ alert('📚 Biblioteca'); limpar(); }
+  if(action==='favoritos'){ alert('❤️ Favoritos'); limpar(); }
+  if(action==='arquivos'){ alert('📁 Meus Arquivos'); limpar(); }
+  if(action==='plano'){ alert('💎 Voce ja e PRO!'); limpar(); }
+  if(action==='sobre'){ alert('NEXO PRO MAX v2.0'); limpar(); }
 }
 </script>
 </body>
