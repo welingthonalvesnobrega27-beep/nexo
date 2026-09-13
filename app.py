@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 
@@ -7,16 +7,17 @@ CORS(app)
 
 @app.route('/')
 def home():
-    return send_from_directory('.', 'index.html')
+    try:
+        with open('index.html','r',encoding='utf-8') as f:
+            return f.read()
+    except:
+        return "<h1>NEXO Pro</h1><p>index.html não encontrado</p>"
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     msg = data.get('message','')
-    if not msg:
-        return jsonify({"reply":"Oi! Como posso ajudar?"}), 200
-    # MODO TESTE GARANTIDO - funciona sem chave
-    return jsonify({"reply": f"[MODO TESTE - sem chave] Você disse: {msg}"}), 200
+    return jsonify({"reply": f"[MODO TESTE OK] Você disse: {msg}"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
